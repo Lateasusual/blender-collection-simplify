@@ -11,9 +11,9 @@ bl_info = {
     "location": "Properties > Render > Simplify",
     "warning": "",  # warning icon text
     "wiki_url": "",  # TODO Github wiki
-    "tracker_url": "https://github.com/Lateasusual/blender-pytrails/issues",
+    "tracker_url": "https://github.com/Lateasusual/blender-collection-simplify/issues",
     "support": "COMMUNITY",
-    "category": "Animation"
+    "category": "Render"
 }
 
 class SCENE_OT_simplify_collection(Operator):
@@ -63,13 +63,13 @@ class RENDER_PT_simplify_collection(Panel):
         layout.use_property_split = True
         
         layout.prop_search(context.scene, "simplify_col", context.scene.collection, "children", text='Collection')
+        layout.prop(context.scene, 'simplify_col_viewport', text='Show in Viewport')
+        layout.prop(context.scene, 'simplify_col_render', text='Show in Render')
         
-        row = layout.row()
-        op = row.operator('scene.simplify_collection', text='simplify')
-        op.show_v = False
+        op = layout.operator('scene.simplify_collection', text='Set Subdivision Visibility')
+        op.show_v = context.scene.simplify_col_viewport
+        op.show_r = context.scene.simplify_col_render
         
-        op = row.operator('scene.simplify_collection', text='unsimplify')
-        op.show_v = True
         
         
 classes = [
@@ -81,11 +81,16 @@ def register():
     for cls in classes:
         bpy.utils.register_class(cls)
     bpy.types.Scene.simplify_col = StringProperty('Collection')
+    bpy.types.Scene.simplify_col_viewport = BoolProperty('Show in viewport', options=set())
+    bpy.types.Scene.simplify_col_render = BoolProperty('Show in render', options=set())
     
 def unregister():
     for cls in classes:
         bpy.utils.unregister_class(cls)
     del bpy.types.Scene.simplify_col
+    del bpy.types.Scene.simplify_col_viewport
+    del bpy.types.Scene.simplify_col_render
+    
         
 if __name__ == '__main__':
     register()
